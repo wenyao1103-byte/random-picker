@@ -47,36 +47,58 @@
         </div>
     </div>
 
-    <script>
-        function startDraw() {
-            const numDisplay = document.getElementById('number-display');
-            const photo = document.getElementById('main-photo');
-            const placeholder = document.getElementById('placeholder');
-            
-            // 根據你 web-assets1 的圖片數量，這裡建議設定為 8
-            const totalImages = 9; 
-            const result = Math.floor(Math.random() * totalImages) + 1;
-            numDisplay.innerText = result;
+<script>
+    // ===== 設定區 =====
+    const totalImages = 9;
 
-            // 更新為你的新儲存庫 web-assets1
-            const imageUrl = `https://raw.githubusercontent.com/wenyao1103-byte/web-assets1/main/${result}.png`;
+    // 建立「尚未抽過」的清單
+    let remainingNumbers = Array.from(
+        { length: totalImages },
+        (_, i) => i + 1
+    );
 
-            photo.style.display = 'none';
+    function startDraw() {
+        const numDisplay = document.getElementById('number-display');
+        const photo = document.getElementById('main-photo');
+        const placeholder = document.getElementById('placeholder');
+
+        // 如果已經抽完
+        if (remainingNumbers.length === 0) {
             placeholder.style.display = 'block';
-            placeholder.innerText = "載入中...";
-            photo.src = imageUrl;
-
-            photo.onload = () => {
-                placeholder.style.display = 'none';
-                photo.style.display = 'block';
-            };
-
-            photo.onerror = () => {
-                placeholder.style.display = 'block';
-                placeholder.innerText = "讀取失敗，請檢查檔名";
-                photo.style.display = 'none';
-            };
+            placeholder.innerText = "🎉 已全部抽完";
+            photo.style.display = 'none';
+            numDisplay.innerText = "✓";
+            return;
         }
-    </script>
+
+        // 從剩餘清單中隨機選一個 index
+        const randomIndex = Math.floor(Math.random() * remainingNumbers.length);
+        const result = remainingNumbers[randomIndex];
+
+        // 把抽到的數字從清單移除
+        remainingNumbers.splice(randomIndex, 1);
+
+        numDisplay.innerText = result;
+
+        const imageUrl =
+            `https://raw.githubusercontent.com/wenyao1103-byte/web-assets1/main/${result}.png?v=${Date.now()}`;
+
+        photo.style.display = 'none';
+        placeholder.style.display = 'block';
+        placeholder.innerText = "載入中...";
+        photo.src = imageUrl;
+
+        photo.onload = () => {
+            placeholder.style.display = 'none';
+            photo.style.display = 'block';
+        };
+
+        photo.onerror = () => {
+            placeholder.style.display = 'block';
+            placeholder.innerText = "讀取失敗，請檢查檔名";
+            photo.style.display = 'none';
+        };
+    }
+</script>
 </body>
 </html>
